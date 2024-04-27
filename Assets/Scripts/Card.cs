@@ -49,7 +49,7 @@ public class Card : MonoBehaviour
     }
     private void OnMouseUp()
     {
-        if (photonView.IsMine && transform.position.y > 0 && transform.position.y < 3)
+        if (photonView.IsMine && transform.localPosition.y > 0 && transform.localPosition.y < 3)
         {
             isMove = false;
             PhotonNetwork.Instantiate(entityPrefabName + id, transform.position, Quaternion.identity);

@@ -29,9 +29,15 @@ public class Entity : MonoBehaviour, IPunObservable
         {
             if (zone != null)
             {
-                direction = (photonView.IsMine ? Vector3.up : Vector3.down) + Vector3.right * (zone.transform.position - transform.position).normalized.x * 4;
+                direction = Mathf.Abs(transform.position.x - zone.transform.position.x) < 0.2f ?
+                    (photonView.IsMine ? Vector3.up : Vector3.down) : 
+                    Vector3.right * (zone.transform.position.x > transform.position.x ? 1 : -1);
             }
-            rb.velocity = direction * speed;
+            rb.velocity = direction * speed * 2;
+        }
+        else
+        {
+            rb.velocity = Vector3.zero;
         }
     }
 
@@ -45,8 +51,34 @@ public class Entity : MonoBehaviour, IPunObservable
         {
             collision.GetComponent<Player>().TakeDamage();
         }
+        else if (collision.GetComponent<Entity>() != null)
+        {
+            StartCoroutine(AttackEnemy(collision.GetComponent<Entity>()));
+        } 
     }
 
+    IEnumerator AttackEnemy(Entity enemy)
+    {
+        isAttack = true;
+        while (enemy != null)
+        {
+            enemy.TakeDamage(damage);
+            yield return new WaitForSeconds(1f);
+        }
+        isAttack = false;
+    }
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+    public void Die()
+    {
+        PhotonNetwork.Destroy(photonView);
+    }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
