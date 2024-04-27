@@ -5,10 +5,12 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Button FindGameBtn;
+    [SerializeField] private TextMeshProUGUI FindGameBtnText;
 
     [SerializeField] private string region;
 
@@ -30,6 +32,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 2;
         PhotonNetwork.JoinOrCreateRoom("game", roomOptions, TypedLobby.Default);
+        FindGameBtn.interactable = false;
+        FindGameBtnText.text = "Поиск битвы...";
     }
     public override void OnCreatedRoom()
     {

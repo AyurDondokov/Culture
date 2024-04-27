@@ -13,11 +13,7 @@ public class Card : MonoBehaviour
 
     [SerializeField] private string entityPrefabName;
     private Animator an;
-    public enum CardState
-    {
-        InDeck, Moving
-    }
-    private CardState state = CardState.InDeck;
+    private bool isMove;
     private void Start()
     {
         an = GetComponent<Animator>();
@@ -33,7 +29,7 @@ public class Card : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (photonView.IsMine)
+        if (photonView && photonView.IsMine)
             an.SetBool("isHover", true);
     }
     private void OnMouseExit()
@@ -46,16 +42,16 @@ public class Card : MonoBehaviour
     {
         if (photonView.IsMine)
         {
+            isMove = true;
             an.SetTrigger("isMoving");
-            state = CardState.Moving;
             StartCoroutine(MoveToMouse());
         }
     }
     private void OnMouseUp()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine && transform.position.y > 0 && transform.position.y < 3)
         {
-            StopAllCoroutines();
+            isMove = false;
             PhotonNetwork.Instantiate(entityPrefabName + id, transform.position, Quaternion.identity);
             deck.cards.Remove(this);
             deck.UpdateCardPositions();
@@ -65,7 +61,7 @@ public class Card : MonoBehaviour
 
     IEnumerator MoveToMouse()
     {
-        while (true) 
+        while (isMove) 
         {
             transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward*5;
             yield return null;

@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FindGameBtn: {fileID: 2089199161}
+  FindGameBtnText: {fileID: 1901857791}
   region: eu
 --- !u!4 &5692934
 Transform:
