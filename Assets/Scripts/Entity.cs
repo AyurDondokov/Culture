@@ -51,7 +51,7 @@ public class Entity : MonoBehaviour, IPunObservable
         {
             collision.GetComponent<Player>().TakeDamage();
         }
-        else if (collision.GetComponent<Entity>() != null)
+        else if (!isAttack && collision.GetComponent<Entity>() != null)
         {
             StartCoroutine(AttackEnemy(collision.GetComponent<Entity>()));
         } 
