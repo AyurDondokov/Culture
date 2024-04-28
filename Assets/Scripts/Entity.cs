@@ -15,12 +15,21 @@ public class Entity : MonoBehaviour, IPunObservable
     private Zone zone;
     private Vector2 direction;
     public bool isAttack;
+    private bool isCanAttackPlayer = true;
+    private bool isPlayer = true;
+
+    [Header("Автор, Историческая личность, Герой произведения")]
+    public string role = "Автор"; // Историческая личность, Герой произведения
+
     private void Start()
     {
         photonView = GetComponent<PhotonView>();
         rb = GetComponent<Rigidbody2D>();
         if (!photonView.IsMine)
+        {
             transform.position = new Vector3(transform.position.x, -transform.position.y, transform.position.z);
+            isPlayer = true;
+        }
     }
 
     private void FixedUpdate()
@@ -33,7 +42,7 @@ public class Entity : MonoBehaviour, IPunObservable
                     (photonView.IsMine ? Vector3.up : Vector3.down) : 
                     Vector3.right * (zone.transform.position.x > transform.position.x ? 1 : -1);
             }
-            rb.velocity = direction * speed * 2;
+            rb.velocity = direction * speed;
         }
         else
         {
@@ -47,9 +56,10 @@ public class Entity : MonoBehaviour, IPunObservable
         {
             zone = collision.GetComponent<Zone>();
         }
-        else if (collision.GetComponent<Player>() != null)
+        else if (collision.GetComponent<Player>() != null && isCanAttackPlayer)
         {
             collision.GetComponent<Player>().TakeDamage();
+            isCanAttackPlayer = false;
         }
         else if (!isAttack && collision.GetComponent<Entity>() != null)
         {
@@ -62,7 +72,7 @@ public class Entity : MonoBehaviour, IPunObservable
         isAttack = true;
         while (enemy != null)
         {
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(damage + ((enemy.role == "Автор" && role == "Историческая личность" ||  enemy.role == "Герой произведения" && role == "Автор" || enemy.role == "Автор" && role == "Историческая личность") ? 1 : 0));
             yield return new WaitForSeconds(1f);
         }
         isAttack = false;
@@ -77,7 +87,7 @@ public class Entity : MonoBehaviour, IPunObservable
     }
     public void Die()
     {
-        PhotonNetwork.Destroy(photonView);
+        gameObject.SetActive(false);
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -87,6 +97,7 @@ public class Entity : MonoBehaviour, IPunObservable
             stream.SendNext(damage);
             stream.SendNext(speed);
             stream.SendNext(isAttack);
+            stream.SendNext(role);
         }
         else
         {
@@ -94,6 +105,7 @@ public class Entity : MonoBehaviour, IPunObservable
             damage = (int)stream.ReceiveNext();
             speed = (int)stream.ReceiveNext();
             isAttack = (bool)stream.ReceiveNext();
+            role = (string)stream.ReceiveNext();
         }
     }
 }

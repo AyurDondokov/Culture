@@ -31,7 +31,14 @@ public class Player : MonoBehaviour, IPunObservable
         health -= 1;
         if (health <= 0)
         {
-            gameManager.Lose();
+            if (photonView.IsMine)
+            {
+                gameManager.Lose();
+            }
+            else
+            {
+                gameManager.Win();
+            }
         }
         gameManager.UpdateHealth();
     }
@@ -43,11 +50,11 @@ public class Player : MonoBehaviour, IPunObservable
     {
         if (stream.IsWriting)
         {
-
+            stream.SendNext(health);
         }
         else
         {
-
+            health = (int)stream.ReceiveNext();
         }
     }
 }

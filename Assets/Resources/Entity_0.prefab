@@ -73,8 +73,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: fe3852467ea5e4b488f8c7e0006c970b, type: 3}
-  m_Color: {r: 0.1445799, g: 0.5377358, b: 0.17597854, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 423d50c8d9741664f8045dd7bfcdcf3c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -157,11 +157,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bc779917b3fe1140ab2b641c3fa1202, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
-  maxHealth: 3
-  damage: 1
-  speed: 1
+  health: 10
+  maxHealth: 10
+  damage: 3
+  speed: 3
   isAttack: 0
+  role: "\u0410\u0432\u0442\u043E\u0440"
 --- !u!50 &7282922247107271171
 Rigidbody2D:
   serializedVersion: 4
@@ -222,7 +223,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.44, y: 0.58}
+  m_Size: {x: 0.58, y: 0.58}
   m_Direction: 0
 --- !u!114 &-964609780841877688
 MonoBehaviour:
